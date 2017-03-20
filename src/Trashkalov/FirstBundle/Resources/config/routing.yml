@@ -1,0 +1,4 @@
+trashkalov_first_entity:
+    resource: "@TrashkalovFirstBundle/Resources/config/routing/entity.php"
+    prefix:   /entity
+

@@ -1,16 +1,18 @@
 <?php
 
-namespace Trashkalov\FirstBundle\Entity;
+declare(strict_types=1);
+
+namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
- * Entity
+ * Article
  *
- * @ORM\Table(name="entity")
- * @ORM\Entity(repositoryClass="Trashkalov\FirstBundle\Repository\EntityRepository")
+ * @ORM\Entity()
  */
-class Entity
+class Article
 {
     /**
      * @var int
@@ -24,7 +26,7 @@ class Entity
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=250)
+     * @ORM\Column(name="name", type="string", length=200)
      */
     private $name;
 
@@ -48,7 +50,7 @@ class Entity
      *
      * @return int
      */
-    public function getId()
+    public function getId(): integer
     {
         return $this->id;
     }
@@ -58,9 +60,9 @@ class Entity
      *
      * @param string $name
      *
-     * @return Entity
+     * @return Article
      */
-    public function setName($name)
+    public function setName(string $name): Article
     {
         $this->name = $name;
 
@@ -72,7 +74,7 @@ class Entity
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -82,9 +84,9 @@ class Entity
      *
      * @param string $description
      *
-     * @return Entity
+     * @return Article
      */
-    public function setDescription($description)
+    public function setDescription(string $description): Article
     {
         $this->description = $description;
 
@@ -96,7 +98,7 @@ class Entity
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -106,9 +108,9 @@ class Entity
      *
      * @param \DateTime $createdAt
      *
-     * @return Entity
+     * @return Article
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(\DateTime $createdAt): Article
     {
         $this->createdAt = $createdAt;
 
@@ -120,7 +122,7 @@ class Entity
      *
      * @return \DateTime
      */
-    public function getCreatedAt()
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }

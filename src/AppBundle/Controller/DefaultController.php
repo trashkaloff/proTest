@@ -32,5 +32,33 @@ class DefaultController extends Controller
         $Articles->flush();
 
         return $Article->getId();
+        var_dump($Articles);
+        exit;
+    }
+    public function showAction($id)
+    {
+        $Article = $this->getDoctrine()->getRepository(Article::class)->find($id);
+    }
+    public function updateAction($id)
+    {
+        $Articles = $this->getDoctrine()->getManager();
+        $Article =$Articles->getRepository(Article::class)->find($id);
+        $Article->setName();
+        $Articles->flush();
+
+        return $this->redirectToRoute();
+    }
+    public function deleteAction($id)
+    {
+        $Articles = $this->getDoctrine()->getManager();
+        $Article =$Articles->getRepository(Article::class)->find($id);
+        $Article->setName();
+        $Articles->remove($id);
+        $Articles->flush();
+
+        return $this->redirectToRoute();
+
+        var_dump($Articles);
+        exit;
     }
 }

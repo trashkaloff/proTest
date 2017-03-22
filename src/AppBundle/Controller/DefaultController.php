@@ -8,6 +8,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class DefaultController
+ * @package AppBundle\Controller
+ */
 class DefaultController extends Controller
 {
     /**
@@ -17,9 +21,13 @@ class DefaultController extends Controller
     {
         $Article = $this->getDoctrine()->getRepository(Article::class);
         $Articles = $Article->findAll();
-        var_dump($Articles);
-        exit;
+
+        return $this->render('app/Resources/views/entity/index.html.twig');
     }
+
+    /**
+     * @return int
+     */
     public function createAction()
     {
         $Article = new Article();
@@ -32,22 +40,39 @@ class DefaultController extends Controller
         $Articles->flush();
 
         return $Article->getId();
-        var_dump($Articles);
-        exit;
     }
+
+    /**
+     * @param $id
+     */
     public function showAction($id)
     {
         $Article = $this->getDoctrine()->getRepository(Article::class)->find($id);
     }
+
+    /**
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
     public function updateAction($id)
     {
         $Articles = $this->getDoctrine()->getManager();
         $Article =$Articles->getRepository(Article::class)->find($id);
+        if (!$Article) {
+            throw $this->createNotFoundException(
+                'No WTF id '.$id
+            );
+        }
         $Article->setName();
         $Articles->flush();
 
-        return $this->redirectToRoute();
+        return $this->redirectToRoute('app/Resources/views/entity/index.html.twig');
     }
+
+    /**
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
     public function deleteAction($id)
     {
         $Articles = $this->getDoctrine()->getManager();
@@ -56,9 +81,7 @@ class DefaultController extends Controller
         $Articles->remove($id);
         $Articles->flush();
 
-        return $this->redirectToRoute();
+        return $this->redirectToRoute('app/Resources/views/entity/edit.html.twig');
 
-        var_dump($Articles);
-        exit;
     }
 }

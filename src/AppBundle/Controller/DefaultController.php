@@ -22,7 +22,24 @@ class DefaultController extends Controller
         $Article = $this->getDoctrine()->getRepository(Article::class);
         $Articles = $Article->findAll();
 
-        return $this->render('app/Resources/views/entity/index.html.twig');
+        return $this->render('entity/index.html.twig');
+
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function newAction(Request $request)
+    {
+        $Article = new Article();
+        $form = $this->createFormBuilder($Article);
+
+        if($form->isValid()){
+            $Article = $this->getDoctrine()->getManager();
+            $Articles->persist($Article);
+            $Articles->flush($Article);
+        }
+        return $this->render('entity/new.html.twig');
     }
 
     /**
@@ -48,6 +65,8 @@ class DefaultController extends Controller
     public function showAction($id)
     {
         $Article = $this->getDoctrine()->getRepository(Article::class)->find($id);
+
+        return $this->render('entity/show.html.twig');
     }
 
     /**
@@ -66,7 +85,7 @@ class DefaultController extends Controller
         $Article->setName();
         $Articles->flush();
 
-        return $this->redirectToRoute('app/Resources/views/entity/index.html.twig');
+        return $this->redirectToRoute('entity/index.html.twig');
     }
 
     /**
@@ -81,7 +100,16 @@ class DefaultController extends Controller
         $Articles->remove($id);
         $Articles->flush();
 
-        return $this->redirectToRoute('app/Resources/views/entity/edit.html.twig');
+        return $this->redirectToRoute('entity/edit.html.twig');
 
+    }
+
+    /**
+     * @param Article $Article
+     * @return \Symfony\Component\Form\Form
+     */
+    private function createDeleteForm(Article $Article)
+    {
+        return $this->createFormBuilder()->setAction($this->generateUrl($Article->getId()))->setMethod('delete')->getForm();
     }
 }

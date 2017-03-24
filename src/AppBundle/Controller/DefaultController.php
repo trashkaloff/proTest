@@ -100,5 +100,4 @@ class DefaultController extends Controller
 
         return $this->redirectToRoute('entity/index.html.twig');
     }
-
 }

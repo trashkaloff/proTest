@@ -19,41 +19,34 @@ class DefaultController extends Controller
     /**
      * @Route("/", name="homepage")
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
         $Article = $this->getDoctrine()->getRepository(Article::class);
         $Articles = $Article->findAll();
 
         return $this->render('entity/index.html.twig');
-
     }
-
-    /**
-     * @return string
-     */
-    public function createAction()
-    {
-        $Article = new Article();
-        $Article->setName("name");
-        $Article->setDescription("description");
-        $Article->setCreatedAt(new \DateTime());
-
-        return new Response('got ID').$Article->getId();
-    }
-
 
     /**
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return string|\Symfony\Component\HttpFoundation\Response
      */
     public function newAction(Request $request)
     {
+        $Article = new Article();
         $form = $this->createFormBuilder($Article);
+        $form->handleRequest($request);
+
+        $Article->setName("name");
+        $Article->setDescription("description");
+        $Article->setCreatedAt(new \DateTime());
 
         if($form->isValid()) {
             $Articles = $this->getDoctrine()->getManager();
             $Articles->persist($Article);
             $Articles->flush();
+
+            return new Response('Thnx Bro, U complied field ').$Article->getId();
         }
         return $this->render('entity/new.html.twig');
     }
@@ -77,9 +70,7 @@ class DefaultController extends Controller
         $Articles = $this->getDoctrine()->getManager();
         $Article =$Articles->getRepository(Article::class)->find($id);
         if (!$Article) {
-            throw $this->createNotFoundException(
-                'No WTF id '.$id
-            );
+            throw $this->createNotFoundException('No WTF id '.$id);
         }
         $Article->setName("name");
         $Articles->flush();

@@ -34,15 +34,13 @@ class DefaultController extends Controller
     public function createAction()
     {
         $Article = new Article();
-
-
         $Article->setName("name");
         $Article->setDescription("description");
         $Article->setCreatedAt(new \DateTime());
 
-
         return new Response('got ID').$Article->getId();
     }
+
 
     /**
      * @param Request $request

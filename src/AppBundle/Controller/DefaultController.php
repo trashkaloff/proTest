@@ -5,8 +5,10 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Article;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Class DefaultController
@@ -27,36 +29,35 @@ class DefaultController extends Controller
     }
 
     /**
-     * @param Request $request
-     */
-    public function newAction(Request $request)
-    {
-        $Article = new Article();
-        $form = $this->createFormBuilder($Article);
-
-        if($form->isValid()){
-            $Article = $this->getDoctrine()->getManager();
-            $Articles->persist($Article);
-            $Articles->flush($Article);
-        }
-        return $this->render('entity/new.html.twig');
-    }
-
-    /**
-     * @return int
+     * @return string
      */
     public function createAction()
     {
         $Article = new Article();
-        $Article->setName();
-        $Article->setDescription();
-        $Article->setCreatedAt();
 
-        $Articles = $this->getDoctrine()->getManager();
-        $Articles->persist($Article);
-        $Articles->flush();
 
-        return $Article->getId();
+        $Article->setName("name");
+        $Article->setDescription("description");
+        $Article->setCreatedAt(new \DateTime());
+
+
+        return new Response('got ID').$Article->getId();
+    }
+
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function newAction(Request $request)
+    {
+        $form = $this->createFormBuilder($Article);
+
+        if($form->isValid()) {
+            $Articles = $this->getDoctrine()->getManager();
+            $Articles->persist($Article);
+            $Articles->flush();
+        }
+        return $this->render('entity/new.html.twig');
     }
 
     /**
@@ -82,7 +83,7 @@ class DefaultController extends Controller
                 'No WTF id '.$id
             );
         }
-        $Article->setName();
+        $Article->setName("name");
         $Articles->flush();
 
         return $this->redirectToRoute('entity/index.html.twig');
@@ -95,21 +96,11 @@ class DefaultController extends Controller
     public function deleteAction($id)
     {
         $Articles = $this->getDoctrine()->getManager();
-        $Article =$Articles->getRepository(Article::class)->find($id);
-        $Article->setName();
+        $Article = $Articles->getRepository(Article::class)->find($id);
         $Articles->remove($id);
         $Articles->flush();
 
-        return $this->redirectToRoute('entity/edit.html.twig');
-
+        return $this->redirectToRoute('entity/index.html.twig');
     }
 
-    /**
-     * @param Article $Article
-     * @return \Symfony\Component\Form\Form
-     */
-    private function createDeleteForm(Article $Article)
-    {
-        return $this->createFormBuilder()->setAction($this->generateUrl($Article->getId()))->setMethod('delete')->getForm();
-    }
 }

@@ -24,7 +24,7 @@ class DefaultController extends Controller
         $Article = $this->getDoctrine()->getRepository(Article::class);
         $Articles = $Article->findAll();
 
-        return $this->render('entity/index.html.twig');
+        return $this->render('entity/index.html.twig', array('Article' => $Articles));
     }
 
     /**
@@ -34,19 +34,20 @@ class DefaultController extends Controller
     public function newAction(Request $request)
     {
         $Article = new Article();
-        $form = $this->createFormBuilder($Article);
+        $form = $this->createForm(Article::class, $Article);
         $form->handleRequest($request);
 
-        $Article->setName("name");
-        $Article->setDescription("description");
-        $Article->setCreatedAt(new \DateTime());
+//        $Article->setName("name");
+//        $Article->setDescription("description");
+//        $Article->setCreatedAt(new \DateTime());
 
         if($form->isValid()) {
-            $Articles = $this->getDoctrine()->getManager();
+//            $Articles = $this->getDoctrine()->getManager();
+            $Articles->getData();
             $Articles->persist($Article);
             $Articles->flush();
 
-            return new Response('Thnx Bro, U complied field ').$Article->getId();
+            return $this->redirectToRoute('entity/edit.html.twig'.$Article->getId());
         }
         return $this->render('entity/new.html.twig');
     }

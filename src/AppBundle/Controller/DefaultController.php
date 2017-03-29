@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Article;
+use AppBundle\Form\ArticleType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\BrowserKit\Response;
@@ -17,79 +18,97 @@ use Symfony\Component\Validator\Constraints\DateTime;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/", name="homepage")
+     * @Route("/", name="entity_index")
      */
     public function indexAction()
     {
-        $Article = $this->getDoctrine()->getRepository(Article::class);
-        $Articles = $Article->findAll();
+        $article = $this->getDoctrine()->getRepository(Article::class);
+        $articles = $article->findAll();
 
-        return $this->render('entity/index.html.twig', array('Article' => $Articles));
+        return $this->render('entity/index.html.twig', array('articles' => $articles));
     }
 
     /**
+     * @Route("/new", name="entity_new")
+     *
      * @param Request $request
+     *
      * @return string|\Symfony\Component\HttpFoundation\Response
      */
     public function newAction(Request $request)
     {
-        $Article = new Article();
-        $form = $this->createForm(Article::class, $Article);
+        $article = new Article();
+        $form = $this->createForm(Article::class, $article);
         $form->handleRequest($request);
 
-//        $Article->setName("name");
-//        $Article->setDescription("description");
-//        $Article->setCreatedAt(new \DateTime());
-
         if($form->isValid()) {
-//            $Articles = $this->getDoctrine()->getManager();
-            $Articles->getData();
-            $Articles->persist($Article);
-            $Articles->flush();
+            $em = $this->getDoctrine()->getManager();
+            $em->getData();
+            $em->persist($article);
+            $em->flush();
 
-            return $this->redirectToRoute('entity/edit.html.twig'.$Article->getId());
+            return $this->redirectToRoute('entity_index');
         }
-        return $this->render('entity/new.html.twig');
+        return $this->render('entity/new.html.twig', array('article' => $article,
+            'form' => $form->createView()));
     }
 
     /**
+     * @Route("/show/{id}", name="entity_show")
+     *
      * @param $id
      */
     public function showAction($id)
     {
-        $Article = $this->getDoctrine()->getRepository(Article::class)->find($id);
+        $em = $this->getDoctrine()->getManager()
+        $article = $em->getRepository(Article::class)->find($id);
 
-        return $this->render('entity/show.html.twig');
+        return $this->render('entity/show.html.twig', array('article' => $article));
     }
 
     /**
+     * @Route("/edit/{id}", name="entity_edit")
+     *
      * @param $id
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function updateAction($id)
     {
-        $Articles = $this->getDoctrine()->getManager();
-        $Article =$Articles->getRepository(Article::class)->find($id);
-        if (!$Article) {
+        $em = $this->getDoctrine()->getManager();
+        $article =$em->getRepository(Article::class)->find($id);
+
+        if (!$article) {
             throw $this->createNotFoundException('No WTF id '.$id);
         }
-        $Article->setName("name");
-        $Articles->flush();
 
-        return $this->redirectToRoute('entity/index.html.twig');
+       $editForm = $this->createForm(new ArticleType(), $article);
+
+        if($editForm->isValid()){
+            $em->persist($article);
+            $em->flush();
+
+            return $this->redirect('entity_edit');
+        }
+
+        return $this->render('entity/edit.html.twig', array('article' => $article,
+            'edit_form' => $editForm->createView()));
     }
 
     /**
+     * @Route("/delete/{id}", name="entity_delete")
+     *
      * @param $id
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function deleteAction($id)
     {
-        $Articles = $this->getDoctrine()->getManager();
-        $Article = $Articles->getRepository(Article::class)->find($id);
-        $Articles->remove($id);
-        $Articles->flush();
+        $em = $this->getDoctrine()->getManager();
+        $article = $em->getRepository(Article::class)->find($id);
+        $em->remove($id);
+        $em->flush();
 
-        return $this->redirectToRoute('entity/index.html.twig');
+        return $this->redirectToRoute('entity_index');
     }
 }

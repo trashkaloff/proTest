@@ -50,7 +50,7 @@ class Article
      *
      * @return int
      */
-    public function getId(): integer
+    public function getId()
     {
         return $this->id;
     }
@@ -76,7 +76,7 @@ class Article
      */
     public function getName(): string
     {
-        return $this->name;
+        return (string) $this->name;
     }
 
     /**
@@ -90,7 +90,7 @@ class Article
     {
         $this->description = $description;
 
-        return $this;
+        return  $this;
     }
 
     /**
@@ -100,7 +100,7 @@ class Article
      */
     public function getDescription(): string
     {
-        return $this->description;
+        return (string) $this->description;
     }
 
     /**
@@ -122,7 +122,7 @@ class Article
      *
      * @return \DateTime
      */
-    public function getCreatedAt(): \DateTime
+    public function getCreatedAt()
     {
         return $this->createdAt;
     }

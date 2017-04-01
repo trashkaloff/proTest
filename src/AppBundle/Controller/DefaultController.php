@@ -38,12 +38,11 @@ class DefaultController extends Controller
     public function newAction(Request $request)
     {
         $article = new Article();
-        $form = $this->createForm(Article::class, $article);
+        $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
         if($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->getData();
             $em->persist($article);
             $em->flush();
 
@@ -60,7 +59,7 @@ class DefaultController extends Controller
      */
     public function showAction($id)
     {
-        $em = $this->getDoctrine()->getManager()
+        $em = $this->getDoctrine()->getManager();
         $article = $em->getRepository(Article::class)->find($id);
 
         return $this->render('entity/show.html.twig', array('article' => $article));
@@ -73,22 +72,24 @@ class DefaultController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function updateAction($id)
+    public function updateAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+        $id = $request->get('id');
         $article =$em->getRepository(Article::class)->find($id);
 
         if (!$article) {
             throw $this->createNotFoundException('No WTF id '.$id);
         }
 
-       $editForm = $this->createForm(new ArticleType(), $article);
+       $editForm = $this->createForm(ArticleType::class, $article);
+        $editForm->handleRequest($request);
 
         if($editForm->isValid()){
             $em->persist($article);
             $em->flush();
 
-            return $this->redirect('entity_edit');
+            return $this->redirectToRoute('entity_edit', array('id' => $id));
         }
 
         return $this->render('entity/edit.html.twig', array('article' => $article,
@@ -106,7 +107,7 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $article = $em->getRepository(Article::class)->find($id);
-        $em->remove($id);
+        $em->remove($article);
         $em->flush();
 
         return $this->redirectToRoute('entity_index');

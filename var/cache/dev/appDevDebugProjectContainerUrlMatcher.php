@@ -119,6 +119,21 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\DefaultController::newAction',  '_route' => 'entity_new',);
         }
 
+        // entity_show
+        if (0 === strpos($pathinfo, '/show') && preg_match('#^/show/(?P<id>[^/]++)$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'entity_show')), array (  '_controller' => 'AppBundle\\Controller\\DefaultController::showAction',));
+        }
+
+        // entity_edit
+        if (0 === strpos($pathinfo, '/edit') && preg_match('#^/edit/(?P<id>[^/]++)$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'entity_edit')), array (  '_controller' => 'AppBundle\\Controller\\DefaultController::updateAction',));
+        }
+
+        // entity_delete
+        if (0 === strpos($pathinfo, '/delete') && preg_match('#^/delete/(?P<id>[^/]++)$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'entity_delete')), array (  '_controller' => 'AppBundle\\Controller\\DefaultController::deleteAction',));
+        }
+
         throw 0 < count($allow) ? new MethodNotAllowedException(array_unique($allow)) : new ResourceNotFoundException();
     }
 }

@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints\DateTime;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/", name="entity_index")
+     * @Route("/", name="article_index")
      */
     public function indexAction()
     {
@@ -29,7 +29,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/new", name="entity_new")
+     * @Route("/new", name="article_new")
      *
      * @param Request $request
      *
@@ -46,14 +46,14 @@ class DefaultController extends Controller
             $em->persist($article);
             $em->flush();
 
-            return $this->redirectToRoute('entity_index');
+            return $this->redirectToRoute('article_index');
         }
         return $this->render('entity/new.html.twig', array('article' => $article,
             'form' => $form->createView()));
     }
 
     /**
-     * @Route("/show/{id}", name="entity_show")
+     * @Route("/show/{id}", name="article_show")
      *
      * @param $id
      */
@@ -66,7 +66,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/edit/{id}", name="entity_edit")
+     * @Route("/edit/{id}", name="article_edit")
      *
      * @param $id
      *
@@ -97,7 +97,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/delete/{id}", name="entity_delete")
+     * @Route("/delete/{id}", name="article_delete")
      *
      * @param $id
      *
@@ -110,6 +110,6 @@ class DefaultController extends Controller
         $em->remove($article);
         $em->flush();
 
-        return $this->redirectToRoute('entity_index');
+        return $this->redirectToRoute('article_index');
     }
 }

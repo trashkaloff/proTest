@@ -25,7 +25,7 @@ class InterfaceSymfony
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=200)
+     * @ORM\Column(name="name", type="text")
      */
     private $name;
 

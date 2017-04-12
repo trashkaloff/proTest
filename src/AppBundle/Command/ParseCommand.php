@@ -2,6 +2,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\ClassSymfony;
+use AppBundle\Entity\InterfaceSymfony;
 use AppBundle\Entity\NamespaceSymfony;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Command\Command;
@@ -24,33 +25,36 @@ class ParseCommand extends ContainerAwareCommand
         $html = file_get_contents('http://api.symfony.com/3.2/namespaces.html');
         $crawler = new Crawler($html);
         $em = $this->getContainer()->get('doctrine')->getManager();
-//        var_dump($em);
-//        exit;
 
-        foreach ($crawler->filter('div.namespace-container > ul > li > a') as $item){
-            $url = 'http://api.symfony.com/3.2/' .$item->getAttribute('href');
+        foreach ($crawler->filter('div.namespace-container > ul > li > a') as $item) {
+            $url = 'http://api.symfony.com/3.2/' . $item->getAttribute('href');
             $namespace = new NamespaceSymfony();
             $namespace->setName($item->textContent);
             $namespace->setUrl($url);
             $em->persist($namespace);
 
-            var_dump($item->nodeValue);
+            $target = file_get_contents($url);
+            $DOMcrawler = new Crawler($target);
 
-//            $target = file_get_contents($url);
-//            $DOMcrawler = new Crawler($target);
-//
-//            foreach ($DOMcrawler->filter('p') as $itemes){
-//                    $itemes->getAttribute('href');
-//                    $class = new ClassSymfony();
-//                    $class->setUrl($itemes);
-//                    $class->setName($itemes->textContent);
-//                    $class->setNamespace($namespace);
-//                    $em->persist($class);
-//             }
-//
-//            var_dump($item->nodeValue);
+            foreach ($DOMcrawler->filter('p') as $itemes) {
+                $itemes->getAttribute('href');
+                $class = new ClassSymfony();
+                $class->setUrl('http://api.symfony.com/3.2/');
+                $class->setName($itemes->textContent);
+                $class->setNamespace($namespace);
+                $em->persist($class);
+            }
+            foreach ($DOMcrawler->filter('ul') as $value) {
+                $value->getAttribute('href');
+                $interface = new InterfaceSymfony();
+                $interface->setUrl('http://api.symfony.com/3.2/');
+                $interface->setName($value->textContent);
+                $interface->setNamespace($namespace);
+                $em->persist($interface);
+
+                var_dump($item->nodeValue);
+            }
         }
         $em->flush();
     }
-
 }

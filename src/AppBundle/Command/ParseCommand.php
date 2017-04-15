@@ -36,25 +36,30 @@ class ParseCommand extends ContainerAwareCommand
             $target = file_get_contents($url);
             $DOMcrawler = new Crawler($target);
 
-            foreach ($DOMcrawler->filter('p') as $itemes) {
-                $itemes->getAttribute('href');
+            foreach ($DOMcrawler->filter('div#page-content > div.container-fluid.underlined > div.row > div > a') as $classItem) {
                 $class = new ClassSymfony();
-                $class->setUrl('http://api.symfony.com/3.2/');
-                $class->setName($itemes->textContent);
+                $class->setUrl('http://api.symfony.com/3.2/' . str_replace("../", "", $classItem->getAttribute('href')));
+                $class->setName($classItem->textContent);
                 $class->setNamespace($namespace);
                 $em->persist($class);
             }
-            foreach ($DOMcrawler->filter('ul') as $value) {
-                $value->getAttribute('href');
-                $interface = new InterfaceSymfony();
-                $interface->setUrl('http://api.symfony.com/3.2/');
-                $interface->setName($value->textContent);
-                $interface->setNamespace($namespace);
-                $em->persist($interface);
+            foreach ($DOMcrawler->filter('h2') as $hItem) {
 
+                if ($hItem->textContent == "Interfaces") {
+
+                    $node = $hItem->nextSibling->nextSibling->getElementsByTagName('a');
+
+                    foreach ($node as $element) {
+                        $interface = new InterfaceSymfony();
+                        $interface->setUrl('http://api.symfony.com/3.2/' . str_replace("../", "", $element->getAttribute('href')));
+                        $interface->setName($element->textContent);
+                        $interface->setNamespace($namespace);
+                        $em->persist($interface);
+                    }
+                }
                 var_dump($item->nodeValue);
             }
+            $em->flush();
         }
-        $em->flush();
     }
 }

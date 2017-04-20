@@ -24,8 +24,6 @@ class ParseCommand extends ContainerAwareCommand
             ->setHelp('This command allows you to create a user...');
     }
 
-
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $html = file_get_contents('http://api.symfony.com/3.2/namespaces.html');
@@ -42,16 +40,15 @@ class ParseCommand extends ContainerAwareCommand
 
         if($nodeLinks->count() > 0){
             foreach ($nodeLinks as $item){
+                var_dump('Namespaces: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
                 $this->getRecursion($el,'http://api.symfony.com/3.2/' . $item->getAttribute('href'));
-
             }
      }
         $DOMcrawler = $crawler->filter('div#page-content > div.container-fluid.underlined > div.row > div > a');
-
             if($DOMcrawler->count() > 0){
                 foreach ($DOMcrawler as $item){
-
                 }
+                var_dump('Classes: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
             }
         $node = $crawler->filter('h2');
             if ($node->count() > 0){
@@ -59,46 +56,11 @@ class ParseCommand extends ContainerAwareCommand
                     if ($item->textContent == 'Interfaces'){
                         $hItem = $item->nextSibling->nextSibling->getElementsByTagName('a');
                         foreach ($hItem as $row){
-
+                            var_dump('Interfaces: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
                         }
                     }
                 }
             }
-               var_dump($item->nodeValue);
-//        foreach ($crawler as $item) {
-//            $url = 'http://api.symfony.com/3.2/' . $item->getAttribute('href');
-//            $namespace = new NamespaceSymfony();
-//            $namespace->setName($item->textContent);
-//            $namespace->setUrl($url);
-//            $em->persist($namespace);
-//            $target = file_get_contents($url);
-//            $DOMcrawler = new Crawler($target);
-//        }
-//
-//            foreach ( as $classItem) {
-//                $class = new ClassSymfony();
-//                $class->setUrl('http://api.symfony.com/3.2/' . str_replace("../", "", $classItem->getAttribute('href')));
-//                $class->setName($classItem->textContent);
-//                $class->setNamespace($namespace);
-//                $em->persist($class);
-//            }
-//            foreach ($DOMcrawler->filter('h2') as $hItem) {
-//
-//                if ($hItem->textContent == "Interfaces") {
-//
-//                    $node = $hItem->nextSibling->nextSibling->getElementsByTagName('a');
-//
-//                    foreach ($node as $element) {
-//                        $interface = new InterfaceSymfony();
-//                        $interface->setUrl('http://api.symfony.com/3.2/' . str_replace("../", "", $element->getAttribute('href')));
-//                        $interface->setName($element->textContent);
-//                        $interface->setNamespace($namespace);
-//                        $em->persist($interface);
-//                    }
-//                }
-//                var_dump($item->nodeValue);
-//            }
-//            $em->flush();
+//               var_dump($item->nodeValue);
         }
-
 }

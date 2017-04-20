@@ -50,7 +50,6 @@ class ParseCommand extends ContainerAwareCommand
 
             if($DOMcrawler->count() > 0){
                 foreach ($DOMcrawler as $item){
-              //      var_dump('class:'.'http://api.symfony.com/3.2/'.str_replace('../','', $item->getAttribute('href')));
 
                 }
             }
@@ -60,7 +59,7 @@ class ParseCommand extends ContainerAwareCommand
                     if ($item->textContent == 'Interfaces'){
                         $hItem = $item->nextSibling->nextSibling->getElementsByTagName('a');
                         foreach ($hItem as $row){
-                           // var_dump('interf: '.'http://api.symfony.com/3.2/'.str_replace('../','', $row->getAttribute('href')));
+
                         }
                     }
                 }

@@ -5,15 +5,38 @@ declare(strict_types=1);
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * NamespaceSymfony
  *
  * @ORM\Entity()
+ *
+ * @Gedmo\Tree(type="nested")
+ *
  */
 class NamespaceSymfony
 {
+
+    /**
+     * @var NamespaceSymfony
+     *
+     * @Gedmo\TreeParent
+     *
+     * @ORM\ManyToOne(targetEntity="NamespaceSymfony", inversedBy="children")
+     */
+    private $parent;
+
+    /**
+     * @var NamespaceSymfony
+     *
+     * @ORM\OneToMany(targetEntity="NamespaceSymfony", mappedBy="parent")
+     *
+     * @ORM\OrderBy({"left"="ASC"})
+     *
+     */
+    private $children;
     /**
      * @var int
      *
@@ -58,6 +81,37 @@ class NamespaceSymfony
         return $this->interfaces;
     }
 
+    /**
+     * @return NamespaceSymfony
+     */
+    public function getParent(): NamespaceSymfony
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param NamespaceSymfony $parent
+     */
+    public function setParent(NamespaceSymfony $parent)
+    {
+        $this->parent = $parent;
+    }
+
+    /**
+     * @return NamespaceSymfony
+     */
+    public function getChildren(): NamespaceSymfony
+    {
+        return $this->children;
+    }
+
+    /**
+     * @param NamespaceSymfony $children
+     */
+    public function setChildren(NamespaceSymfony $children)
+    {
+        $this->children = $children;
+    }
     /**
      * @return int
      */

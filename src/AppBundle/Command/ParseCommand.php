@@ -32,35 +32,61 @@ class ParseCommand extends ContainerAwareCommand
         return $this->getRecursion($crawler, 'http://api.symfony.com/3.2/');
     }
 
-        public function getRecursion(Crawler $el,$links)
+    public function getRecursion(Crawler $el, $links)
     {
         $html = file_get_contents($links);
         $crawler = new Crawler($html);
         $nodeLinks = $crawler->filter('div.namespace-container > ul > li > a');
+        $em = $this->getContainer()->get('doctrine')->getManager();
 
         if($nodeLinks->count() > 0){
+
             foreach ($nodeLinks as $item){
+                $url = 'http://api.symfony.com/3.2/' . $item->getAttribute('href');
+                $namespace = new NamespaceSymfony();
+//                var_dump($namespace);
+//                exit;
+                $namespace->setName($item->textContent);
+                $namespace->setUrl($url);
+                $em->persist($namespace);
                 var_dump('Namespaces: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
                 $this->getRecursion($el,'http://api.symfony.com/3.2/' . $item->getAttribute('href'));
             }
-     }
+        }
         $DOMcrawler = $crawler->filter('div#page-content > div.container-fluid.underlined > div.row > div > a');
+
             if($DOMcrawler->count() > 0){
-                foreach ($DOMcrawler as $item){
+
+                foreach ($DOMcrawler as $classItem){
+                    $class = new ClassSymfony();
+                    $class->setUrl('http://api.symfony.com/3.2/' . str_replace("../", "", $classItem->getAttribute('href')));
+                    $class->setName($classItem->textContent);
+                    $class->setNamespace($namespace);
+                    $class->setParent($namespace);
+                    $em->persist($class);
+                    // var_dump('Classes: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
                 }
-                var_dump('Classes: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
             }
         $node = $crawler->filter('h2');
+
             if ($node->count() > 0){
                 foreach ($node as $item){
                     if ($item->textContent == 'Interfaces'){
                         $hItem = $item->nextSibling->nextSibling->getElementsByTagName('a');
+
                         foreach ($hItem as $row){
-                            var_dump('Interfaces: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
+                            $interface = new InterfaceSymfony();
+                            $interface->setUrl('http://api.symfony.com/3.2/' . str_replace("../", "", $row->getAttribute('href')));
+                            $interface->setName($row->textContent);
+                            $interface->setNamespace($namespace);
+                            $interface->setParent($namespace);
+                            $em->persist($interface);
+//                            var_dump('Interfaces: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
                         }
                     }
                 }
             }
-//               var_dump($item->nodeValue);
+                $em->flush();
+               var_dump($item->nodeValue);
         }
 }

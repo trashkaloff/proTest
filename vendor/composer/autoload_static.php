@@ -195,6 +195,13 @@ class ComposerStaticInit2554ac6f5d571f82debebd2d3d7133d2
                 0 => __DIR__ . '/..' . '/sensiolabs/security-checker',
             ),
         ),
+        'G' => 
+        array (
+            'Gedmo\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/gedmo/doctrine-extensions/lib',
+            ),
+        ),
         'D' => 
         array (
             'Doctrine\\ORM\\' => 
@@ -220,6 +227,13 @@ class ComposerStaticInit2554ac6f5d571f82debebd2d3d7133d2
             'Doctrine\\Common\\Annotations\\' => 
             array (
                 0 => __DIR__ . '/..' . '/doctrine/annotations/lib',
+            ),
+        ),
+        'B' => 
+        array (
+            'Behat\\Transliterator' => 
+            array (
+                0 => __DIR__ . '/..' . '/behat/transliterator/src',
             ),
         ),
     );

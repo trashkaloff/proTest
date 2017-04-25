@@ -82,19 +82,23 @@ class NamespaceSymfony
     }
 
     /**
-     * @return NamespaceSymfony
+     * @return NamespaceSymfony|null
      */
-    public function getParent(): NamespaceSymfony
+    public function getParent(): ?NamespaceSymfony
     {
         return $this->parent;
     }
 
     /**
-     * @param NamespaceSymfony $parent
+     * @param NamespaceSymfony|null $parent
+     *
+     * @return NamespaceSymfony
      */
-    public function setParent(NamespaceSymfony $parent=null)
+    public function setParent(?NamespaceSymfony $parent): NamespaceSymfony
     {
         $this->parent = $parent;
+
+        return $this;
     }
 
     /**

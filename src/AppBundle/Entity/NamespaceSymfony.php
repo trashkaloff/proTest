@@ -92,7 +92,7 @@ class NamespaceSymfony
     /**
      * @param NamespaceSymfony $parent
      */
-    public function setParent(NamespaceSymfony $parent)
+    public function setParent(NamespaceSymfony $parent=null)
     {
         $this->parent = $parent;
     }
@@ -108,8 +108,7 @@ class NamespaceSymfony
     /**
      * @param NamespaceSymfony $children
      */
-    public function setChildren(NamespaceSymfony $children)
-    {
+    public function setChildren(NamespaceSymfony $children){
         $this->children = $children;
     }
     /**

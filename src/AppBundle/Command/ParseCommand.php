@@ -32,9 +32,9 @@ class ParseCommand extends ContainerAwareCommand
         return $this->getRecursion($crawler, 'http://api.symfony.com/3.2/');
     }
 
-    public function getRecursion(Crawler $el, $links)
+    public function getRecursion(Crawler $el, $link, $parent=null)
     {
-        $html = file_get_contents($links);
+        $html = file_get_contents($link);
         $crawler = new Crawler($html);
         $nodeLinks = $crawler->filter('div.namespace-container > ul > li > a');
         $em = $this->getContainer()->get('doctrine')->getManager();
@@ -44,11 +44,11 @@ class ParseCommand extends ContainerAwareCommand
             foreach ($nodeLinks as $item){
                 $url = 'http://api.symfony.com/3.2/' . $item->getAttribute('href');
                 $namespace = new NamespaceSymfony();
-//                var_dump($namespace);
-//                exit;
                 $namespace->setName($item->textContent);
                 $namespace->setUrl($url);
+                $namespace->setParent($parent);
                 $em->persist($namespace);
+
                 var_dump('Namespaces: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
                 $this->getRecursion($el,'http://api.symfony.com/3.2/' . $item->getAttribute('href'));
             }
@@ -57,14 +57,13 @@ class ParseCommand extends ContainerAwareCommand
 
             if($DOMcrawler->count() > 0){
 
-                foreach ($DOMcrawler as $classItem){
+                foreach ($DOMcrawler as $item){
                     $class = new ClassSymfony();
-                    $class->setUrl('http://api.symfony.com/3.2/' . str_replace("../", "", $classItem->getAttribute('href')));
-                    $class->setName($classItem->textContent);
-                    $class->setNamespace($namespace);
-                    $class->setParent($namespace);
+                    $class->setUrl('http://api.symfony.com/3.2/' . str_replace("../", "", $item->getAttribute('href')));
+                    $class->setName($item->textContent);
+                    //$class->setNamespace($namespace);
                     $em->persist($class);
-                    // var_dump('Classes: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
+                     var_dump('Classes: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
                 }
             }
         $node = $crawler->filter('h2');
@@ -74,14 +73,13 @@ class ParseCommand extends ContainerAwareCommand
                     if ($item->textContent == 'Interfaces'){
                         $hItem = $item->nextSibling->nextSibling->getElementsByTagName('a');
 
-                        foreach ($hItem as $row){
+                        foreach ($hItem as $item){
                             $interface = new InterfaceSymfony();
-                            $interface->setUrl('http://api.symfony.com/3.2/' . str_replace("../", "", $row->getAttribute('href')));
-                            $interface->setName($row->textContent);
-                            $interface->setNamespace($namespace);
-                            $interface->setParent($namespace);
+                            $interface->setUrl('http://api.symfony.com/3.2/' . str_replace("../", "", $item->getAttribute('href')));
+                            $interface->setName($item->textContent);
+                           // $interface->setNamespace($namespace);
                             $em->persist($interface);
-//                            var_dump('Interfaces: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
+                            var_dump('Interfaces: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
                         }
                     }
                 }

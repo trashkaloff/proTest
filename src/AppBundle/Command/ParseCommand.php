@@ -24,35 +24,39 @@ class ParseCommand extends ContainerAwareCommand
             ->setHelp('This command allows you to create a user...');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $html = file_get_contents('http://api.symfony.com/3.2/namespaces.html');
-        $crawler = new Crawler($html);
-
-        return $this->getRecursion($crawler, 'http://api.symfony.com/3.2/');
+        return $this->getRecursion('http://api.symfony.com/3.2/Symfony.html', null);
     }
 
-    public function getRecursion(Crawler $el, $link, $parent=null)
+    /**
+     * @param string $link
+     * @param NamespaceSymfony|null $parent
+     */
+    public function getRecursion(string $link, ?NamespaceSymfony $parent)
     {
+        $em = $this->getContainer()->get('doctrine')->getManager();
         $html = file_get_contents($link);
         $crawler = new Crawler($html);
-        $nodeLinks = $crawler->filter('div.namespace-container > ul > li > a');
-        $em = $this->getContainer()->get('doctrine')->getManager();
+        $nodeLinks = $crawler->filter('div.namespace-list > a');
 
-        if($nodeLinks->count() > 0){
+        // namespaces
+        foreach ($nodeLinks as $item) {
+            var_dump($item->textContent);
+            $url = 'http://api.symfony.com/3.2/' . str_replace('../', '', $item->getAttribute('href'));
+            $namespace = new NamespaceSymfony();
+            $namespace->setName($item->textContent);
+            $namespace->setUrl($url);
+            $namespace->setParent($parent);
+            $em->persist($namespace);
 
-            foreach ($nodeLinks as $item){
-                $url = 'http://api.symfony.com/3.2/' . $item->getAttribute('href');
-                $namespace = new NamespaceSymfony();
-                $namespace->setName($item->textContent);
-                $namespace->setUrl($url);
-                $namespace->setParent($parent);
-                $em->persist($namespace);
-
-                var_dump('Namespaces: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
-                $this->getRecursion($el,'http://api.symfony.com/3.2/' . $item->getAttribute('href'));
-            }
+            $this->getRecursion($url, $namespace);
         }
+
         $DOMcrawler = $crawler->filter('div#page-content > div.container-fluid.underlined > div.row > div > a');
 
             if($DOMcrawler->count() > 0){
@@ -63,7 +67,7 @@ class ParseCommand extends ContainerAwareCommand
                     $class->setName($item->textContent);
                     //$class->setNamespace($namespace);
                     $em->persist($class);
-                     var_dump('Classes: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
+//                     var_dump('Classes: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
                 }
             }
         $node = $crawler->filter('h2');
@@ -79,12 +83,12 @@ class ParseCommand extends ContainerAwareCommand
                             $interface->setName($item->textContent);
                            // $interface->setNamespace($namespace);
                             $em->persist($interface);
-                            var_dump('Interfaces: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
+//                            var_dump('Interfaces: '.'http://api.symfony.com/3.2/'.$item->getAttribute('href'));
                         }
                     }
                 }
             }
-                $em->flush();
-               var_dump($item->nodeValue);
+        $em->flush();
+//               var_dump($item->nodeValue);
         }
 }

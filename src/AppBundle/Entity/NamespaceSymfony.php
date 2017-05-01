@@ -162,4 +162,52 @@ class NamespaceSymfony
 
         return $this;
     }
+
+    /**
+     * Add child
+     *
+     * @param \AppBundle\Entity\NamespaceSymfony $child
+     *
+     * @return NamespaceSymfony
+     */
+    public function addChild(\AppBundle\Entity\NamespaceSymfony $child)
+    {
+        $this->children[] = $child;
+
+        return $this;
+    }
+
+    /**
+     * Remove child
+     *
+     * @param \AppBundle\Entity\NamespaceSymfony $child
+     */
+    public function removeChild(\AppBundle\Entity\NamespaceSymfony $child)
+    {
+        $this->children->removeElement($child);
+    }
+
+    /**
+     * Add interface
+     *
+     * @param \AppBundle\Entity\InterfaceSymfony $interface
+     *
+     * @return NamespaceSymfony
+     */
+    public function addInterface(\AppBundle\Entity\InterfaceSymfony $interface)
+    {
+        $this->interfaces[] = $interface;
+
+        return $this;
+    }
+
+    /**
+     * Remove interface
+     *
+     * @param \AppBundle\Entity\InterfaceSymfony $interface
+     */
+    public function removeInterface(\AppBundle\Entity\InterfaceSymfony $interface)
+    {
+        $this->interfaces->removeElement($interface);
+    }
 }

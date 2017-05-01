@@ -127,4 +127,3 @@ class Article
         return $this->createdAt;
     }
 }
-

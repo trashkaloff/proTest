@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\DataFixtures;
+namespace AppBundle\DataFixtures\ORM;
 
 use AppBundle\Entity\Users;
 use Doctrine\Common\DataFixtures\FixtureInterface;
@@ -8,7 +8,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 class LoadUsersData implements FixtureInterface
 {
-
     /**
      * Load data fixtures with the passed EntityManager
      *

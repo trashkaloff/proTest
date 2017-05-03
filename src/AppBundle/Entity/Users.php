@@ -1,11 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: trashkaloff
- * Date: 01.05.17
- * Time: 8:53
- */
-
+declare(strict_types=1);
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,6 +7,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class Users
+ * @ORM\Entity()
  * @package AppBundle\Entity
  */
 class Users implements UserInterface
